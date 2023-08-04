@@ -11,7 +11,7 @@ class PredictResponse:
     def __init__(self, response: dict, error: str=None) -> None:
         self.response = response
         self.error = error
-    
+
     def get(self):
         self.log2db()
         if self.response is not None:

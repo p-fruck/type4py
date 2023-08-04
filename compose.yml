@@ -1,0 +1,8 @@
+version: "3"
+services:
+  type4py:
+    image: ghcr.io/saltudelft/type4py:latest
+    volumes:
+      - ./type4py/:/type4py/type4py/:z
+    ports:
+      - 5001:5010

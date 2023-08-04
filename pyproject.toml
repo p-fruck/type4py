@@ -1,0 +1,5 @@
+[tool.ruff]
+
+ignore = [
+    "E501", # ignore line-length which should be handled by formatter (e.g. black)
+]

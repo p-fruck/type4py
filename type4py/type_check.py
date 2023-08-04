@@ -63,6 +63,7 @@ class TCManager(ABC):
         pass
 
     def _type_check(self, fpath):
+        print(f"Running typecheck on {fpath}", flush=True)
         try:
             cwd = os.getcwd()
             os.chdir(dirname(fpath))
@@ -110,6 +111,18 @@ class TCManager(ABC):
     def heavy_assess(self, fpath):
         try:
             retcode, outlines = self._type_check(fpath)
+
+            # ToDo: cleanup debug printing
+            print("="*32, flush=True)
+            with open(fpath) as file:
+                for line in file:
+                    print(line, flush=True)
+            print("-"*32, flush=True)
+
+            for line in outlines:
+                print(line, flush=True)
+            print("="*32, flush=True)
+
             parsed_result = self._parse_tc_output(retcode, outlines)
             self._report_errors(parsed_result)
             return parsed_result

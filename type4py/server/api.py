@@ -33,7 +33,7 @@ def before_request_f():
 def hello_world():
     return render_template('index.html')
 
-def predict_type4py_model(src_file: str, **args) -> dict:
+def predict_type4py_model(src_code: str, **args) -> dict:
 
     is_fp_enabled = bool(int(args.get("fp"))) if args.get("fp") is not None else True
     session['file_hash'] = args.get('fh')
@@ -43,11 +43,21 @@ def predict_type4py_model(src_file: str, **args) -> dict:
     # if len(request.data.splitlines()) > app.config['MAX_LOC']:
     #     return PredictResponse(None, f"File is larger than {app.config['MAX_LOC']} LoC").get()
 
-    if bool(int(args.get("tc"))):
-        return PredictResponse(None, "Type-checking is not available yet!").get()
-        #return ServerResponse(get_type_checked_preds(type_annotate_file(t4py_pretrained_m, src_file, None), src_file)).get()
-    else:
-        return PredictResponse(type_annotate_file(t4py_pretrained_m, src_file, None, is_fp_enabled)).get()
+    # ToDo: Switch condition back after development
+    is_type_checking = True  # bool(int(args.get("tc")))
+    print(1, flush=True)
+    print(is_fp_enabled, flush=True)
+    print(src_code, flush=True)
+    annotated_unchecked = type_annotate_file(t4py_pretrained_m, src_code, None, is_fp_enabled)
+
+    if not is_type_checking:
+        return PredictResponse(annotated_unchecked).get()
+
+    print("Using typechecking which is currently under development")
+    annotated_checked = get_type_checked_preds(annotated_unchecked, src_code)
+    return PredictResponse(annotated_checked).get()
+
+
 
 
 @bp.route('/predict', methods = ['POST', 'GET'])

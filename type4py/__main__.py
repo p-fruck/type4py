@@ -10,37 +10,37 @@ import warnings
 warnings.filterwarnings("ignore")
 
 data_loading_comb = {'train': data_loaders.load_combined_train_data, 'valid': data_loaders.load_combined_valid_data,
-                     'test': data_loaders.load_combined_test_data, 'labels': data_loaders.load_combined_labels, 
+                     'test': data_loaders.load_combined_test_data, 'labels': data_loaders.load_combined_labels,
                      'name': 'complete'}
 
 data_loading_woi = {'train': data_loaders.load_combined_train_data_woi, 'valid': data_loaders.load_combined_valid_data_woi,
-                     'test': data_loaders.load_combined_test_data_woi, 'labels': data_loaders.load_combined_labels, 
+                     'test': data_loaders.load_combined_test_data_woi, 'labels': data_loaders.load_combined_labels,
                      'name': 'woi'}
 
 data_loading_woc = {'train': data_loaders.load_combined_train_data_woc, 'valid': data_loaders.load_combined_valid_data_woc,
-                     'test': data_loaders.load_combined_test_data_woc, 'labels': data_loaders.load_combined_labels, 
+                     'test': data_loaders.load_combined_test_data_woc, 'labels': data_loaders.load_combined_labels,
                      'name': 'woc'}
 
 data_loading_wov = {'train': data_loaders.load_combined_train_data_wov, 'valid': data_loaders.load_combined_valid_data_wov,
-                     'test': data_loaders.load_combined_test_data_wov, 'labels': data_loaders.load_combined_labels, 
+                     'test': data_loaders.load_combined_test_data_wov, 'labels': data_loaders.load_combined_labels,
                      'name': 'wov'}
 
 data_loading_param = {'train': data_loaders.load_param_train_data, 'valid': data_loaders.load_param_valid_data,
-                     'test': data_loaders.load_param_test_data, 'labels': data_loaders.load_param_labels, 
+                     'test': data_loaders.load_param_test_data, 'labels': data_loaders.load_param_labels,
                      'name': 'argument'}
 
 data_loading_ret = {'train': data_loaders.load_ret_train_data, 'valid': data_loaders.load_ret_valid_data,
-                     'test': data_loaders.load_ret_test_data, 'labels': data_loaders.load_ret_labels, 
+                     'test': data_loaders.load_ret_test_data, 'labels': data_loaders.load_ret_labels,
                      'name': 'return'}
 
 data_loading_var = {'train': data_loaders.load_var_train_data, 'valid': data_loaders.load_var_valid_data,
-                     'test': data_loaders.load_var_test_data, 'labels': data_loaders.load_var_labels, 
+                     'test': data_loaders.load_var_test_data, 'labels': data_loaders.load_var_labels,
                      'name': 'variable'}
 
 def extract(args):
     p = Pipeline(args.c, args.o, True, False, args.d)
     p.run(find_repos_list(args.c) if args.l is None else find_repos_list(args.c)[:args.l], args.w)
-    
+
 def preprocess(args):
     from type4py.preprocess import preprocess_ext_fns
     setup_logs_file(args.o, "preprocess")
@@ -90,9 +90,9 @@ def eval(args):
         evaluate(args.o, data_loading_comb['name'], tasks[args.t], args.tp, args.mrr)
 
 def infer(args):
-    from type4py.infer import infer_main
+    from type4py.deploy.infer import infer_main
     setup_logs_file(args.m, 'infer')
-    infer_main(args.m, args.f)
+    infer_main(args.m, args.f, args.t)
 
 
 def main():
@@ -161,6 +161,7 @@ def main():
     infer_parser = sub_parsers.add_parser('infer')
     infer_parser.add_argument('--m', '--model', required=True, type=str, help="Path to the pre-trained Type4Py model")
     infer_parser.add_argument('--f', '--file', required=True, type=str, help="Path to the input source file for inference")
+    infer_parser.add_argument('--t', '--type-check', required=False, action='store_true', help="Perform static type checking")
     infer_parser.set_defaults(func=infer)
 
     # To ONNX format
